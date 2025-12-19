@@ -1,11 +1,7 @@
-version: '2.4'
-
 services:
   moodle-app:
-    image: tiredofit/moodle:latest
+    image: docker.io/nfrastack/moodle:latest
     container_name: moodle-app
-    links:
-      - moodle-db
     labels:
       - traefik.enable=true
       - traefik.http.routers.moodle.rule=Host(`moodle.example.com`)
@@ -13,10 +9,9 @@ services:
     volumes:
       - ./data/:/www/data
       - ./www/:/www/moodle
-      - ./logs/:/www/logs
+      - ./logs/:/logs
     environment:
       - TIMEZONE=America/Vancouver
-      - CONTAINER_NAME=moodle.hostname.com
 
       - DB_HOST=moodle-db
       - DB_NAME=moodle
@@ -37,13 +32,12 @@ services:
     restart: always
 
   moodle-db:
-    image: tiredofit/mariadb
+    image: docker.io/nfrastack/mariadb:11.8
     container_name: moodle-db
     volumes:
       - ./db:/var/lib/mysql
     environment:
       - TIMEZONE=America/Vancouver
-      - CONTAINER_NAME=moodle-db
 
       - ROOT_PASS=password
       - DB_NAME=moodle
@@ -54,23 +48,21 @@ services:
     restart: always
 
   moodle-db-backup:
-    container_name: moodle-db-backup
-    image: tiredofit/db-backup
-    links:
-     - moodle-db
+    container_name: moodle-db-backup 
+    image: docker.io/tiredofit/db-backup
     volumes:
       - ./dbbackup:/backup
     environment:
       - TIMEZONE=America/Vancouver
-      - CONTAINER_NAME=moodle-db-backup
-      - DB_HOST=moodle-db
-      - DB_TYPE=mariadb
-      - DB_NAME=moodle
-      - DB_USER=moodle
-      - DB_PASS=userpassword
+
+      - DB01_HOST=moodle-db
+      - DB01_TYPE=mariadb
+      - DB01_NAME=moodle
+      - DB01_USER=moodle
+      - DB01_PASS=userpassword
       - DB01_BACKUP_INTERVAL=1440
       - DB01_BACKUP_BEGIN=0000
-      - DB_CLEANUP_TIME=8640
+      - DB01_CLEANUP_TIME=8640
     networks:
       - services
     restart: always
