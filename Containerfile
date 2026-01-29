@@ -59,7 +59,7 @@ RUN echo "" && \
     php-ext reset && \
     php-ext enable core && \
     echo "max_input_vars = 5000" >> /container/data/php-fpm/cli/php.ini && \
-    echo "zend.exceptioncon_ignore_args = On" >> /container/data/php-fpm/cli/php.ini && \
+    echo "zend.exception_ignore_args = On" >> /container/data/php-fpm/cli/php.ini && \
     clone_git_repo "${MOOSH_REPO_URL}" "${MOOSH_VERSION}" /opt/moosh && \
     cd /opt/moosh && \
     composer install --ignore-platform-reqs && \
